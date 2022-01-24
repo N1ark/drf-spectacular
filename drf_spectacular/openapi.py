@@ -964,7 +964,7 @@ class AutoSchema(ViewInspector):
         return None
 
     def get_paginated_name(self, serializer_name):
-        return f'Paginated{serializer_name}List'
+        return f'{serializer_name}PaginatedList'
 
     def map_parsers(self):
         return list(dict.fromkeys([
@@ -1326,7 +1326,7 @@ class AutoSchema(ViewInspector):
             name = name[:-10]
 
         if is_patched_serializer(serializer, direction):
-            name = 'Patched' + name
+            name = name + 'Patched'
 
         if direction == 'request' and spectacular_settings.COMPONENT_SPLIT_REQUEST:
             name = name + 'Request'
