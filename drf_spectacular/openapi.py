@@ -36,7 +36,7 @@ from drf_spectacular.plumbing import (
 )
 from drf_spectacular.settings import spectacular_settings
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, OpenApiResponse
+from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, OpenApiExample
 
 
 class AutoSchema(ViewInspector):
@@ -1051,6 +1051,26 @@ class AutoSchema(ViewInspector):
             if status_code and status_code not in example.status_codes:
                 continue
             filtered_examples.append(example)
+
+        if direction == 'response':
+            # Get the current paginator and its potential schema, for a paginated
+            # example
+            the_schema = {}
+            paginator = self._get_paginator()
+            if paginator:
+                paginator_schema = paginator.get_paginated_response_schema(the_schema)
+
+            if paginator_schema:
+                def paginate(example):
+                    value = {}
+                    for key, field in paginator_schema['properties'].items():
+                        if field is the_schema:
+                            value[key] = [example.value]
+                        else:
+                            value[key] = field['example']
+                    return OpenApiExample(f'Paginated {example.name}', value=value)
+
+                filtered_examples = [paginate(example) for example in filtered_examples]
 
         return build_examples_list(filtered_examples)
 
