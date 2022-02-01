@@ -1052,27 +1052,29 @@ class AutoSchema(ViewInspector):
                 continue
             filtered_examples.append(example)
 
-        if (
-            direction == 'response'
-            and self._is_list_view(serializer)
-            and self._get_paginator()
-        ):
-            # Get the current paginator and its potential schema, for a paginated
-            # example
-            the_schema = {}
-            paginator = self._get_paginator()
-            paginator_schema = paginator.get_paginated_response_schema(the_schema)
+        if direction == 'response' and self._is_list_view(serializer):
+            if self._get_paginator():
+                # Get the current paginator and its potential schema, for a paginated
+                # example
+                the_schema = {}
+                paginator = self._get_paginator()
+                paginator_schema = paginator.get_paginated_response_schema(the_schema)
 
-            def paginate(example):
-                value = {}
-                for key, field in paginator_schema['properties'].items():
-                    if field is the_schema:
-                        value[key] = [example.value]
-                    else:
-                        value[key] = field['example']
-                return OpenApiExample(f'Paginated {example.name}', value=value)
+                def paginate(example):
+                    value = {}
+                    for key, field in paginator_schema['properties'].items():
+                        if field is the_schema:
+                            value[key] = [example.value]
+                        else:
+                            value[key] = field['example']
+                    return OpenApiExample(f'Paginated {example.name}', value=value)
 
-            filtered_examples = [paginate(example) for example in filtered_examples]
+                filtered_examples = [paginate(example) for example in filtered_examples]
+            else:
+                filtered_examples = [
+                    OpenApiExample(f'List {example.name}', value=[example.value])
+                    for example in filtered_examples
+                ]
 
         return build_examples_list(filtered_examples)
 
