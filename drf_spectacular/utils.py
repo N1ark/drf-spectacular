@@ -402,7 +402,7 @@ def extend_schema(
 
 
 def extend_schema_field(
-        field: Union[_SerializerType, _FieldType, OpenApiTypes, Dict],
+        field: Union[_SerializerType, _FieldType, OpenApiTypes, Dict, Callable[[], Union[_SerializerType, _FieldType, OpenApiTypes, Dict]]],
         component_name: Optional[str] = None
 ) -> Callable[[F], F]:
     """
@@ -414,9 +414,12 @@ def extend_schema_field(
 
     Always takes precedence over other mechanisms (e.g. type hints, auto-discovery).
 
-    :param field: accepts a ``Serializer``, :class:`~.types.OpenApiTypes` or raw ``dict``
+    :param field: accepts a ``Serializer``, :class:`~.types.OpenApiTypes`, a raw ``dict``, or a callable returning any of the allowed values.
     :param component_name: signals that the field should be broken out as separate component
     """
+
+    if callable(field):
+        field = field()
 
     def decorator(f):
         set_override(f, 'field', field)
