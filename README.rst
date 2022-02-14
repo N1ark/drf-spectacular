@@ -44,6 +44,7 @@ Features
         - `django-filter <https://github.com/carltongibson/django-filter>`_
         - `drf-nested-routers <https://github.com/alanjds/drf-nested-routers>`_
         - `djangorestframework-recursive <https://github.com/heywbj/django-rest-framework-recursive>`_
+        - `djangorestframework-dataclasses <https://github.com/oxan/djangorestframework-dataclasses>`_
 
 
 For more information visit the `documentation <https://drf-spectacular.readthedocs.io>`_.
@@ -57,8 +58,8 @@ Requirements
 ------------
 
 -  Python >= 3.6
--  Django (2.2, 3.1, 3.2)
--  Django REST Framework (3.10, 3.11, 3.12)
+-  Django (2.2, 3.2, 4.0)
+-  Django REST Framework (3.10, 3.11, 3.12, 3.13)
 
 Installation
 ------------
